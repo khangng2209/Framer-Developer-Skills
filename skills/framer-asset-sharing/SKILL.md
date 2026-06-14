@@ -15,6 +15,18 @@ All Components in Framer are built on ES Modules. Every Smart Component, Code Co
 ### Versions
 URLs often contain a version ID (e.g., `https://framer.com/m/Button-5TDo.js@xyz`). This points to a specific snapshot of your component, ensuring stability even if you continue iterating on the primary version.
 
+## File Splitting & Modularization
+
+While Framer components often start as single files, complex systems should be split into modular helpers and hooks to avoid "God Files."
+
+### How to Split Files
+1. Create helper files for logic, state (e.g., `BridgeManager.ts`), and property controls.
+2. Use **Path-based Naming** to maintain a clean virtual directory structure (e.g., `runtime/BridgeManager.ts`, `hooks/useModelSync.ts`).
+3. Import these modules using relative paths (e.g., `import { bridgeManager } from "./runtime/BridgeManager.ts"`).
+
+> [!TIP]
+> Using path-like names in the Framer Code Editor helps keep the assets panel organized and prevents name collisions across large projects.
+
 ## Preventing Unlinking
 
 To prevent users from unlinking a Code Component (which turns it into a Frame and loses code functionality), use the `@framerDisableUnlink` annotation.

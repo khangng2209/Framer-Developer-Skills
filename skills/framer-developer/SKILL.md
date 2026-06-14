@@ -30,6 +30,10 @@ Specialized techniques to bypass Framer limitations.
     - **Fix:** Wrap the canvas in a `data-import-3d-root-canvas-clipper` DIV. Use `overflow: hidden` and `contain: paint`. Sync its height with the document scroll height.
 - **The "Ghost Renderer" Suppression**:
     - **Hack:** Force `return` in heavy initialization blocks if `RenderTarget.current() === RenderTarget.canvas`. This ensures the Shared Renderer is inactive in the editor, allowing Slots to take over in Standalone mode so designers can see and edit their models.
+- **Multi-File Modularization**:
+    - **Issue**: Standard Framer workflow often encourages single-file components, leading to "God Files" that are impossible to maintain and audit.
+    - **Fix**: Split architecture into separate files for State (`BridgeManager.ts`), Config (`ConfigResolver.ts`), and Controls (`PropertyControls.ts`).
+    - **Naming**: Use path-like naming (e.g., `runtime/BridgeManager.ts`) to create a virtual directory structure that keeps the Framer Assets panel clean.
 - **Global Bridge Debugging**:
     - **Hack:** Expose `window.__IMPORT_3D_RENDERER_DEBUG__.dump()` to inspect registered slots, active owners, and DOM rects directly in the browser console.
 
