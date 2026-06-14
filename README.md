@@ -58,7 +58,7 @@ Framer-Developer-Skills/
 | Framer Animation State Machine | [`skills/framer-animation-state-machine/`](./skills/framer-animation-state-machine/) | [`SKILL.md`](./skills/framer-animation-state-machine/SKILL.md) | Building multi-stage animation lifecycles, sequencing, and explicit visual states. |
 | Framer Asset Sharing | [`skills/framer-asset-sharing/`](./skills/framer-asset-sharing/) | [`SKILL.md`](./skills/framer-asset-sharing/SKILL.md) | Sharing Framer assets, preventing unlinking, and splitting large components into modular helper files. |
 | Framer Auto Sizing | [`skills/framer-auto-sizing/`](./skills/framer-auto-sizing/) | [`SKILL.md`](./skills/framer-auto-sizing/SKILL.md) | Choosing layout annotations, intrinsic sizes, fixed sizing, and responsive component behavior. |
-| Framer CMS Extraction | [`skills/framer-cms-extraction/`](./skills/framer-cms-extraction/) | [`SKILL.md`](./skills/framer-cms-extraction/SKILL.md) | Extracting or inspecting CMS search JSON data from Framer sites. |
+| Framer CMS Extraction | [`skills/framer-cms-extraction/`](./skills/framer-cms-extraction/) | [`SKILL.md`](./skills/framer-cms-extraction/SKILL.md) | Reading/exporting CMS data through the official Server API, with published search-index extraction only as a legacy fallback. |
 | Framer Code Override | [`skills/framer-code-override/`](./skills/framer-code-override/) | [`SKILL.md`](./skills/framer-code-override/SKILL.md) | Writing overrides, HOCs, refs, MutationObservers, and DOM synchronization logic. |
 | Framer Components Reference | [`skills/framer-components-reference/`](./skills/framer-components-reference/) | [`SKILL.md`](./skills/framer-components-reference/SKILL.md) | Looking up core Framer APIs such as `RenderTarget`, localization, and `addPropertyControls`. |
 | Framer Current Location | [`skills/framer-current-location/`](./skills/framer-current-location/) | [`SKILL.md`](./skills/framer-current-location/SKILL.md) | Reading current routes, using Framer router state, or syncing behavior to page changes. |
@@ -81,6 +81,7 @@ Use these entrypoints first when the task is ambiguous:
 - General Framer code component architecture: [`skills/framer-developer/SKILL.md`](./skills/framer-developer/SKILL.md)
 - Property panel or component control changes: [`skills/framer-property-controls/SKILL.md`](./skills/framer-property-controls/SKILL.md)
 - Code overrides: [`skills/framer-code-override/SKILL.md`](./skills/framer-code-override/SKILL.md)
+- CMS export or inspection: [`skills/framer-cms-extraction/SKILL.md`](./skills/framer-cms-extraction/SKILL.md)
 - Runtime cleanup or event safety: [`skills/framer-runtime-guards/SKILL.md`](./skills/framer-runtime-guards/SKILL.md)
 - Cross-component state: [`skills/framer-state-orchestration/SKILL.md`](./skills/framer-state-orchestration/SKILL.md)
 - Three.js or WebGL runtime work: [`skills/framer-threejs/SKILL.md`](./skills/framer-threejs/SKILL.md) and [`skills/framer-webgl/SKILL.md`](./skills/framer-webgl/SKILL.md)

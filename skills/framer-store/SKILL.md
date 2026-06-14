@@ -5,6 +5,10 @@ description: Framer Developer Gem: useStore
 
 # useStore
 
+## Status
+
+This is a legacy/shared-store helper pattern. It is still useful for simple override coordination, but production components should prefer a local singleton store, `useSyncExternalStore`, or the patterns in `skills/framer-state-orchestration/SKILL.md` when state must survive across separate component trees.
+
 `useStore` in Framer allows you to share data, information, and states across the different components you attach them to. When using Overrides or Code components, you can use a shared hook to share data across them:
 
 ````js

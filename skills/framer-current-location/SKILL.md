@@ -5,6 +5,10 @@ description: Framer Developer Gem: useCurrentLocation
 
 # Current Location and Framer Router
 
+## Status
+
+This is a community helper pattern built on top of Framer's official `useRouter` and `useCurrentRouteId` hooks. Prefer the official hooks directly when the component only needs to read the current route or navigate by route ID. Use this helper when the code needs a path-based `[location, setLocation]` API.
+
 When navigating between pages on your Framer website, it is advised to use the useRouter hook from Framer to avoid breaking the navigation history. Additionally, the useCurrentLocation hook, built by the community, can be used.
 
 
@@ -41,6 +45,8 @@ function CodeComponent(props) {
     )
 }
 ```
+
+For production components, prefer copying the local implementation below into your own codebase instead of depending on the external module URL. This keeps behavior stable if the community module changes or disappears.
 
 By default, the hook supports external URLs and routes outside of the Framer project. It will fall back on the classic `window.location.assign` method to redirect to unknown routes. You can use the `strict` flag to allow only available routes. e.g.:
 ```js
@@ -107,7 +113,6 @@ export { useCurrentLocation }
 
 1. 💬 [Access a Page through a Code Component](https://www.framer.community/c/developers/access-a-page-through-a-code-component)
 2. 💬 [Even I Figured Out useRouter (So You Can Too!)](https://www.framer.community/c/developers/even-i-figured-out-userouter-so-you-can-too)
-
 
 
 

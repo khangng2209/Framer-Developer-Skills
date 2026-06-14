@@ -1,51 +1,159 @@
 ---
 name: framer-cms-extraction
-description: Framer Developer Gem: ExtractingCMSData
+description: Framer CMS access through the official Server API, with legacy search-index extraction as a fallback
 ---
 
-## How to Extract JSON Data from CMS Search in Framer (Unofficial Method)
+# Framer CMS Extraction
 
-### Overview
-This guide explains how to extract JSON data from the search component of a CMS in Framer. This method is unofficial and involves using the browser's developer tools to access the search index data. It's important to note that this method is not officially supported by Framer, and the structure of the data may change without notice.
+Use the official Framer Server API first. The older "searchIndex from Network tab" method is now a legacy fallback for cases where the user only has access to a published site and does not have project credentials.
 
-### Prerequisites
-- A website built with Framer that includes a search component.
-- Basic understanding of web browsers and using developer tools.
+## Preferred Method: Server API
+
+Framer now supports project-level Server API access through the `framer-api` package. This is the preferred path for agents, scripts, migration tools, CMS audits, and batch exports.
+
+### Requirements
+
+- Framer project URL, usually copied from the browser URL bar in Framer.
+  - Example: `https://framer.com/projects/Sites--aabbccddeeff`
+- API key created from the project's Site Settings.
+- A local Node.js script or automation runtime.
+- `framer-api` installed in the script project.
+
+### Setup
+
+```bash
+npm i framer-api
+```
+
+Store secrets outside source code:
+
+```bash
+export FRAMER_API_KEY="..."
+export FRAMER_PROJECT_URL="https://framer.com/projects/<id>"
+```
+
+Never paste API keys into a Framer Code Component or any client-side bundle. Server API keys are project-bound credentials and should live in `.env`, a password manager, CI secrets, or another server-side secret store.
+
+### Read CMS Collections
+
+```ts
+import { connect } from "framer-api"
+
+const projectUrl = process.env.FRAMER_PROJECT_URL
+const apiKey = process.env.FRAMER_API_KEY
+
+if (!projectUrl || !apiKey) {
+    throw new Error("Missing FRAMER_PROJECT_URL or FRAMER_API_KEY")
+}
+
+const framer = await connect(projectUrl, apiKey)
+
+try {
+    const collections = await framer.getCollections()
+
+    for (const collection of collections) {
+        const collectionId = (collection as any).id ?? "unknown"
+        const fields = await collection.getFields()
+        const items = await collection.getItems()
+
+        console.log({
+            id: collectionId,
+            readonly: collection.readonly,
+            managedBy: collection.managedBy,
+            fields,
+            items,
+        })
+    }
+} finally {
+    await framer.disconnect()
+}
+```
+
+### Export CMS Data
+
+```ts
+import { writeFile } from "node:fs/promises"
+import { connect } from "framer-api"
+
+const framer = await connect(
+    process.env.FRAMER_PROJECT_URL!,
+    process.env.FRAMER_API_KEY!
+)
+
+try {
+    const output: Record<string, unknown> = {}
+    const collections = await framer.getCollections()
+
+    for (const collection of collections) {
+        const collectionId = (collection as any).id ?? "unknown"
+        const collectionName = (collection as any).name || collectionId
+
+        output[collectionName] = {
+            id: collectionId,
+            readonly: collection.readonly,
+            managedBy: collection.managedBy,
+            fields: await collection.getFields(),
+            items: await collection.getItems(),
+        }
+    }
+
+    await writeFile("framer-cms-export.json", JSON.stringify(output, null, 2))
+} finally {
+    await framer.disconnect()
+}
+```
+
+## When to Use Plugin CMS APIs
+
+Inside a Framer plugin, use the CMS APIs directly. The API surface includes collection discovery, active collection access, fields, items, item ordering, and field ordering.
+
+Common operations:
+
+- `getActiveCollection()`
+- `getCollections()`
+- `getManagedCollections()`
+- `collection.getFields()`
+- `collection.getItems()`
+- `collection.addFields()`
+- `collection.addItems()`
+- `collection.removeFields()`
+- `collection.removeItems()`
+
+Use a plugin when the workflow needs to run inside the Framer editor. Use the Server API when the workflow needs to run from scripts, agents, CI, webhooks, or scheduled jobs.
+
+## Legacy Fallback: Published Search Index
+
+Use this only when all of the following are true:
+
+- The user does not have an API key.
+- The user does not have project edit access.
+- The task is inspection/export from a public published site.
+- The result can tolerate broken data if Framer changes the search index format.
 
 ### Steps
 
-1. **Add a Search Component to Your Framer Site**
-   - Edit your site in Framer and add a search component to any page. This component is necessary to trigger the creation of the search index.
+1. Open the published Framer site.
+2. Trigger the Search component.
+3. Open browser Developer Tools.
+4. Go to the Network tab.
+5. Look for a request related to `searchIndex`.
+6. Open the response and save the JSON.
 
-2. **Publish Your Site**
-   - Once the search component is added, publish your site to make it live (You could just preview as well if you already published your site in the past). This step is crucial as the search index is generated for the live site.
+### Legacy Risks
 
-3. **Visit Your Live Site**
-   - Open a web browser and go to the URL of your live Framer site.
+- The URL and response shape are not a public contract.
+- The data may be incomplete compared to CMS item data available through the API.
+- The method can break without warning.
+- It may not match the project's private draft state.
 
-4. **Trigger the Search Component**
-   - Interact with the search component on your site. This can be done by entering a search query or simply clicking on the search field to activate it.
+## Decision Rule
 
-5. **Open Browser Developer Tools**
-   - Right-click on any part of the web page and select `Inspect` to open the browser's developer tools. Alternatively, you can use keyboard shortcuts like `Ctrl+Shift+I` (Windows/Linux) or `Cmd+Opt+I` (Mac).
+- Have project URL and API key: use Server API.
+- Building an editor plugin: use Plugin CMS APIs.
+- Only have a public site: use search-index extraction as a brittle fallback.
 
-6. **Navigate to the Network Tab**
-   - In the developer tools, find and click on the `Network` tab. This tab shows all network requests made by the page.
+## References
 
-7. **Find the `searchIndex` Request**
-   - With the Network tab open, look for a network request named something like `searchIndex`. This request is responsible for fetching the search data.
-   - You might need to refresh the page and interact with the search component again to see this request.
-
-8. **Copy the Request URL**
-   - Click on the `searchIndex` request to view its details.
-   - Find and copy the Request URL. This URL is the direct link to the JSON file containing the search index data.
-
-9. **Access and Save the JSON Data**
-   - Paste the copied URL into a new browser tab and press Enter. This should display the JSON data.
-   - Right-click on the page and select `Save as` to download the JSON file.
-   - Alternatively, you can copy the JSON data and save it in a text editor as a `.json` file.
-
-### Notes
-- **Storing the JSON Data**: Since this is an unofficial method, it's recommended to store a copy of the JSON file. This ensures you have a stable version of the data, as the original source might change unexpectedly.
-- **Usage Considerations**: Be mindful of how you use this data. Since this method is not officially supported, it may not comply with Framer's terms of service.
-- **Check for Updates**: Regularly check if Framer has introduced any official API or changes that might affect this method.
+- Framer Server API Quick Start: https://www.framer.com/developers/server-api-quick-start
+- Framer API Reference: https://www.framer.com/developers/reference
+- Framer Server API Examples: https://github.com/framer/server-api-examples

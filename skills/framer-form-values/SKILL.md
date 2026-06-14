@@ -4,6 +4,11 @@ description: Framer Developer Gem: useFormValue
 ---
 
 # The useFormValue hook
+
+## Status
+
+This is a third-party Typer/Form workflow, not a general official Framer form API. Use it only when the Framer project is intentionally using Typer-compatible fields. For custom code components, prefer explicit controlled props, local React state, or a project-level store unless the user specifically needs Typer value synchronization.
+
 The `useFormValue` function enables you to read and update input values from forms built with [Typer](https://typer.framer.wiki/). It supports values from any type of input field and work as classic [React Hook](https://legacy.reactjs.org/docs/hooks-intro.html).
 
 ```js
